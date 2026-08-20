@@ -10,3 +10,6 @@ dependencies = [
     "pymupdf>=1.28.2",
     "streamlit>=1.61.1",
 ]
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13"]
+build-backend = "uv_build"
