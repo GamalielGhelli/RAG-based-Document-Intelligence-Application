@@ -43,11 +43,7 @@ Com o `uv` instalado:
 uv sync
 ```
 
-### 3. Instalar o Ollama
-
-Instalando o Ollama em sua máquina e confirmando a instalação:
-
-### 4. Instalando e verificando a versão:
+### 3. Instalar o Ollama no windows
 
 ```bash
 irm https://ollama.com/install.ps1 | iex
@@ -59,7 +55,7 @@ Para conferir:
 ollama --version
 ```
 
-### 5. Baixar os modelos utilizados
+### 4. Baixar os modelos utilizados
 
 ```bash
 ollama pull gemma3:1b
@@ -72,7 +68,7 @@ Para conferir:
 ollama list
 ```
 
-### 6. Adicionar os PDFs
+### 5. Adicionar os PDFs
 
 Os documentos devem estar na pasta:
 
@@ -80,7 +76,7 @@ Os documentos devem estar na pasta:
 data/pdfs/
 ```
 
-### 7. Executar a aplicação
+### 6. Executar a aplicação
 
 ```bash
 uv run streamlit run app.py
