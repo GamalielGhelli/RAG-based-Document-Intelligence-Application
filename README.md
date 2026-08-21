@@ -53,6 +53,8 @@ Instalando o Ollama em sua máquina e confirmando a instalação:
 irm https://ollama.com/install.ps1 | iex
 ```
 
+Para conferir:
+
 ```bash
 ollama --version
 ```
