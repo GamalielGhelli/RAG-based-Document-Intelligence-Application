@@ -95,3 +95,4 @@ PDFs que não possuem camada de texto, como documentos totalmente escaneados, po
 - [Ollama gemma3:1b](https://ollama.com/library/gemma3:1b)
 - [Numpy](https://numpy.org/doc/stable/reference/generated/numpy.dot.html)
 - [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/the-basics.html#extract-text-from-a-pdf)
+- [Streamlit](https://docs.streamlit.io/)
