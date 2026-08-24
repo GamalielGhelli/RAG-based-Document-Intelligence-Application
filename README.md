@@ -27,8 +27,8 @@ O projeto tem como objetivo:
 ### 1. Clonar o repositório
 
 ```bash
-git clone git@github.com:GamalielGhelli/estudo-caso.git
-cd estudo-caso
+git clone git@github.com:GamalielGhelli/RAG-based-Document-Intelligence-Application.git
+cd RAG-based-Document-Intelligence-Application
 ```
 
 ### 2. Instalando o UV e suas dependências
