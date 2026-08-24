@@ -1,4 +1,4 @@
-# Consulta Inteligente de Documentos PDF
+# Aplicativo de Inteligência de Documentos Baseado em RAG
 
 Aplicação em Python desenvolvida para leitura, classificação, busca e consulta de documentos PDF utilizando modelos de Inteligência Artificial executados localmente.
 
