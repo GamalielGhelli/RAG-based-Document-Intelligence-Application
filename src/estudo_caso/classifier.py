@@ -1,55 +1,70 @@
-import ollama
+import re
+import unicodedata
 
-MODEL = "gemma3:1b"
+
+def normalize_text(text: str) -> str:
+    """
+    Normaliza o texto:
+    - transforma em minúsculas
+    - remove acentos
+    """
+
+    text = text.casefold()
+
+    text = unicodedata.normalize(
+        "NFD",
+        text,
+    )
+
+    return "".join(
+        character
+        for character in text
+        if unicodedata.category(character) != "Mn"
+    )
 
 
 def classify_document(text: str) -> str:
     """
-    Classifica o documento como:
-    Lei, Portaria, Resolução ou Outro.
+    Classifica o documento de acordo com o primeiro
+    tipo documental encontrado no início do conteúdo.
+
+    Categorias:
+    - Lei
+    - Portaria
+    - Resolução
+    - Outro
     """
 
-    sample = text[:5000]
+    # Para identificar o tipo do documento,
+    # o início normalmente é suficiente.
+    sample = normalize_text(text[:3000])
 
-    prompt = f"""
-Classifique o documento abaixo em apenas uma das categorias:
+    patterns = {
+        "Lei": r"\blei\b",
+        "Portaria": r"\bportaria\b",
+        "Resolução": r"\bresolucao\b",
+    }
 
-Lei
-Portaria
-Resolução
-Outro
+    matches = []
 
-Responda SOMENTE com o nome da categoria.
+    for document_type, pattern in patterns.items():
+        match = re.search(pattern, sample)
 
-Não explique a resposta.
+        if match:
+            matches.append(
+                (
+                    match.start(),
+                    document_type,
+                )
+            )
 
-Documento:
+    if not matches:
+        return "Outro"
 
-{sample}
-"""
-
-    response = ollama.chat(
-        model=MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
-        options={
-            "temperature": 0,
-        },
+    # Ordena pela posição em que a palavra apareceu
+    # no documento.
+    matches.sort(
+        key=lambda item: item[0]
     )
 
-    result = response["message"]["content"].strip()
-
-    if "Lei" in result:
-        return "Lei"
-
-    if "Portaria" in result:
-        return "Portaria"
-
-    if "Resolução" in result or "Resolucao" in result:
-        return "Resolução"
-
-    return "Outro"
+    return matches[0][1]

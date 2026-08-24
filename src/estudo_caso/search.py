@@ -39,7 +39,7 @@ def cosine_similarity(
     vector_b: np.ndarray,
 ) -> float:
 
-    numerator = np.dot(
+    numerator = np.dot( 
         vector_a,
         vector_b,
     )
@@ -51,7 +51,7 @@ def cosine_similarity(
 
     if denominator == 0:
         return 0.0
-
+    
     return float(
         numerator / denominator
     )
