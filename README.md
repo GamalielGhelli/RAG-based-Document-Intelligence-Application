@@ -375,9 +375,9 @@ Uma evolução futura seria integrar diretamente os resultados da busca ao conte
 
 ## Documentações utilizadas
 
-* [UV](https://docs.astral.sh/uv/getting-started/installation/)
-* [Ollama-Embeddings](https://docs.ollama.com/capabilities/embeddings)
-* [Ollama-Gemma3:1b](https://ollama.com/library/gemma3:1b)
-* [NumPy](https://numpy.org/doc/stable/reference/generated/numpy.dot.html)
-* [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/the-basics.html#extract-text-from-a-pdf)
-* [Streamlit](https://docs.streamlit.io/)
+[UV](https://docs.astral.sh/uv/getting-started/installation/)
+[Ollama-Embeddings](https://docs.ollama.com/capabilities/embeddings)
+[Ollama-Gemma3:1b](https://ollama.com/library/gemma3:1b)
+[NumPy](https://numpy.org/doc/stable/reference/generated/numpy.dot.html)
+[PyMuPDF](https://pymupdf.readthedocs.io/en/latest/the-basics.html#extract-text-from-a-pdf)
+[Streamlit](https://docs.streamlit.io/)
