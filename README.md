@@ -219,8 +219,7 @@ Esse comando cria o ambiente virtual e instala as bibliotecas definidas no `pypr
 
 ### 4. Instalando o Tesseract-ocr
 
-Nesta documentação você encontrará o executável do [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
-após a intalação você deverá clicar no executavel, apenas escolher o idioma e seguir até a instalação seja concluída.
+Nesta documentação você encontrará o executável do [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki), após a intalação você deverá clicar no executavel, apenas escolher o idioma e seguir até a instalação seja concluída.
 
 ### 5. Instalar o Ollama
 
