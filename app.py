@@ -1,9 +1,9 @@
 import streamlit as st
 
-from estudo_caso.chat import ask_document
-from estudo_caso.classifier import classify_document
-from estudo_caso.pdf_reader import extract_text, find_pdfs
-from estudo_caso.search import create_embedding, search_documents
+from estudo_caso.busca_semantica import buscar_documentos, criar_embedding
+from estudo_caso.chat import perguntar_documento
+from estudo_caso.classificador import classificar_documento
+from estudo_caso.extrator_pdf import encontrar_pdfs, extrair_texto
 
 st.set_page_config(
     page_title="Consulta Inteligente de PDFs",
@@ -11,33 +11,40 @@ st.set_page_config(
     layout="wide",
 )
 
-
 @st.cache_data
-def load_documents() -> list[dict]:
+def carregar_documentos() -> list[dict]:
     """
     Carrega os PDFs, extrai seus textos,
     classifica os documentos e gera seus embeddings.
     """
 
-    documents = []
+    documentos = []
 
-    pdf_files = find_pdfs("data/pdfs")
+    arquivos_pdf = encontrar_pdfs(
+        "data/pdfs"
+    )
 
-    for pdf in pdf_files:
-        text = extract_text(pdf)
+    for pdf in arquivos_pdf:
+
+        texto, metodo_extracao = (
+            extrair_texto(pdf)
+        )
 
         print(
             f"[DEBUG] {pdf.name}: "
-            f"{len(text)} caracteres extraídos"
+            f"{len(texto)} caracteres extraídos "
+            f"usando {metodo_extracao}"
         )
 
-        if not text.strip():
-            documents.append(
+        if not texto.strip():
+
+            documentos.append(
                 {
-                    "name": pdf.name,
-                    "path": str(pdf),
-                    "text": "",
-                    "type": "Não processado",
+                    "nome": pdf.name,
+                    "caminho": str(pdf),
+                    "texto": "",
+                    "tipo": "Não processado",
+                    "metodo_extracao": metodo_extracao,
                     "embedding": None,
                     "status": "PDF sem texto extraível",
                 }
@@ -45,29 +52,37 @@ def load_documents() -> list[dict]:
 
             continue
 
-        document_type = classify_document(text)
+        tipo_documento = (
+            classificar_documento(
+                texto
+            )
+        )
 
-        embedding = create_embedding(text)
+        embedding = criar_embedding(
+            texto
+        )
 
-        documents.append(
+        documentos.append(
             {
-                "name": pdf.name,
-                "path": str(pdf),
-                "text": text,
-                "type": document_type,
+                "nome": pdf.name,
+                "caminho": str(pdf),
+                "texto": texto,
+                "tipo": tipo_documento,
+                "metodo_extracao": metodo_extracao,
                 "embedding": embedding,
                 "status": "Processado",
             }
         )
 
-    return documents
-
+    return documentos
 
 # =================================================
 # TÍTULO
 # =================================================
 
-st.title("Consulta Inteligente de Documentos PDF")
+st.title(
+    "Consulta Inteligente de Documentos PDF"
+)
 
 st.write(
     """
@@ -77,207 +92,283 @@ st.write(
     """
 )
 
-
 # =================================================
 # CARREGAMENTO DOS DOCUMENTOS
 # =================================================
 
-with st.spinner("Processando documentos..."):
-    documents = load_documents()
+with st.spinner(
+    "Processando documentos..."
+):
 
+    documentos = carregar_documentos()
 
-if not documents:
+if not documentos:
+
     st.warning(
         "Nenhum arquivo PDF foi encontrado em data/pdfs."
     )
 
     st.stop()
 
-
 st.success(
-    f"{len(documents)} documentos carregados."
+    f"{len(documentos)} documentos carregados."
 )
-
 
 # =================================================
 # 1. CLASSIFICAÇÃO
 # =================================================
 
-st.header("1. Documentos e classificação")
+st.header(
+    "1. Documentos e classificação"
+)
 
+quantidade_ocr = sum(
+    1
+    for documento in documentos
+    if "OCR"
+    in documento["metodo_extracao"]
+)
 
-classification_data = []
+st.caption(
+    f"OCR utilizado em "
+    f"{quantidade_ocr} documento(s)."
+)
 
-for document in documents:
-    classification_data.append(
+dados_classificacao = []
+
+for documento in documentos:
+
+    dados_classificacao.append(
         {
-            "Documento": document["name"],
-            "Tipo": document["type"],
-            "Status": document["status"],
+            "Documento": documento[
+                "nome"
+            ],
+            "Tipo": documento[
+                "tipo"
+            ],
+            "Extração": documento[
+                "metodo_extracao"
+            ],
+            "Status": documento[
+                "status"
+            ],
         }
     )
 
 
 st.dataframe(
-    classification_data,
+    dados_classificacao,
     width="stretch",
+    hide_index=True,
 )
-
 
 # =================================================
 # 2. BUSCA SEMÂNTICA
 # =================================================
 
-st.header("2. Busca por linguagem natural")
-
-
-search_query = st.text_input(
-    "Digite o que deseja encontrar:",
-    placeholder="Ex: documentos relacionados à educação",
+st.header(
+    "2. Busca por linguagem natural"
 )
 
+consulta_busca = st.text_input(
+    "Digite o que deseja encontrar:",
+    placeholder=(
+        "Ex: documentos relacionados à educação"
+    ),
+)
 
-if st.button("Buscar documentos"):
+if st.button(
+    "Buscar documentos"
+):
 
-    if not search_query.strip():
+    if not consulta_busca.strip():
+
         st.warning(
             "Digite uma consulta antes de buscar."
         )
 
     else:
-        results = search_documents(
-            search_query,
-            documents,
+
+        resultados = buscar_documentos(
+            consulta_busca,
+            documentos,
         )
 
         st.subheader(
             "Documentos mais relevantes"
         )
 
-        for position, result in enumerate(
-            results,
+        for posicao, resultado in enumerate(
+            resultados,
             start=1,
         ):
+
             st.write(
                 f"""
-                **{position}. {result['name']}**
+                **{posicao}. {resultado['nome']}**
 
-                Tipo: {result['type']}
+                Tipo: {resultado['tipo']}
 
-                Similaridade: {result['score']:.3f}
+                Similaridade: {resultado['similaridade']:.3f}
                 """
             )
-
 
 # =================================================
 # 3. CHAT
 # =================================================
 
-st.header("3. Chat com o documento")
+@st.fragment
+def exibir_chat(
+    documentos: list[dict],
+) -> None:
+    """
+    Exibe o chat com os documentos.
 
+    O fragment permite atualizar somente
+    esta parte da aplicação durante a conversa.
+    """
 
-# Apenas documentos que possuem texto podem
-# ser utilizados no chat.
-chat_documents = [
-    document
-    for document in documents
-    if document["text"].strip()
-]
-
-
-if not chat_documents:
-    st.warning(
-        "Nenhum documento com texto disponível para o chat."
+    st.header(
+        "3. Chat com o documento"
     )
 
-    st.stop()
+    documentos_chat = [
+        documento
+        for documento in documentos
+        if documento["texto"].strip()
+    ]
 
+    if not documentos_chat:
 
-document_names = [
-    document["name"]
-    for document in chat_documents
-]
-
-
-selected_name = st.selectbox(
-    "Selecione o documento:",
-    document_names,
-)
-
-
-selected_document = next(
-    document
-    for document in chat_documents
-    if document["name"] == selected_name
-)
-
-
-# Se o usuário mudar de documento,
-# limpa o histórico do chat.
-if (
-    "selected_document" not in st.session_state
-    or st.session_state.selected_document != selected_name
-):
-    st.session_state.selected_document = selected_name
-    st.session_state.messages = []
-
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-
-# Exibe histórico
-for message in st.session_state.messages:
-    with st.chat_message(
-        message["role"]
-    ):
-        st.write(
-            message["content"]
+        st.warning(
+            "Nenhum documento com texto "
+            "disponível para o chat."
         )
 
+        return
 
-# Campo de pergunta
-question = st.chat_input(
-    "Faça uma pergunta sobre o documento..."
-)
+    nomes_documentos = [
+        documento["nome"]
+        for documento in documentos_chat
+    ]
 
-
-if question:
-
-    previous_history = (
-        st.session_state.messages.copy()
+    nome_selecionado = st.selectbox(
+        "Selecione o documento:",
+        nomes_documentos,
+        key="seletor_documento",
     )
 
-    # Salva pergunta
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": question,
-        }
+    documento_selecionado = next(
+        documento
+        for documento in documentos_chat
+        if documento["nome"]
+        == nome_selecionado
     )
 
-    # Mostra pergunta
-    with st.chat_message("user"):
-        st.write(question)
+    # Se o usuário trocar de documento,
+    # limpa o histórico da conversa.
+    if (
+        "documento_selecionado"
+        not in st.session_state
+        or
+        st.session_state.documento_selecionado
+        != nome_selecionado
+    ):
 
-    # Gera resposta
-    with st.chat_message("assistant"):
+        st.session_state.documento_selecionado = (
+            nome_selecionado
+        )
 
-        with st.spinner(
-            "Analisando documento..."
+        st.session_state.mensagens = []
+
+    if (
+        "mensagens"
+        not in st.session_state
+    ):
+
+        st.session_state.mensagens = []
+
+    for mensagem in (
+        st.session_state.mensagens
+    ):
+
+        with st.chat_message(
+            mensagem["role"]
         ):
-            answer = ask_document(
-                selected_document["text"],
-                question,
-                previous_history,
+
+            st.write(
+                mensagem["content"]
             )
 
-        st.write(answer)
-
-    # Salva resposta
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": answer,
-        }
+    pergunta = st.chat_input(
+        "Faça uma pergunta sobre o documento...",
+        key="entrada_chat",
     )
+
+    if pergunta:
+
+        historico_anterior = (
+            st.session_state
+            .mensagens
+            .copy()
+        )
+
+        # Salva a pergunta no histórico.
+        st.session_state.mensagens.append(
+            {
+                "role": "user",
+                "content": pergunta,
+            }
+        )
+
+        # Mostra temporariamente
+        # a nova pergunta.
+        with st.chat_message(
+            "user"
+        ):
+
+            st.write(
+                pergunta
+            )
+
+        with st.chat_message(
+            "assistant"
+        ):
+
+            with st.spinner(
+                "Analisando documento..."
+            ):
+
+                resposta = perguntar_documento(
+                    documento_selecionado[
+                        "texto"
+                    ],
+                    pergunta,
+                    historico_anterior,
+                )
+
+            st.write(
+                resposta
+            )
+
+        # Salva a resposta no histórico.
+        st.session_state.mensagens.append(
+            {
+                "role": "assistant",
+                "content": resposta,
+            }
+        )
+
+        # Recarrega somente o fragmento.
+        #
+        # Isso faz com que todas as mensagens
+        # sejam desenhadas novamente antes
+        # do campo de entrada.
+        st.rerun(
+            scope="fragment"
+        )
+
+# Exibe o chat.
+exibir_chat(
+    documentos
+)

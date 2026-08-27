@@ -1,20 +1,25 @@
 import ollama
 
-MODEL = "gemma3:1b"
+MODELO = "gemma3:1b"
 
-MAX_DOCUMENT_CHARS = 30000
+MAX_CARACTERES_DOCUMENTO = 30000
 
-def ask_document(
-    document_text: str,
-    question: str,
-    history: list[dict] | None = None,
+
+def perguntar_documento(
+    texto_documento: str,
+    pergunta: str,
+    historico: list[dict] | None = None,
 ) -> str:
     """
     Faz uma pergunta ao LLM utilizando
     o conteúdo do documento como contexto.
     """
-    context = document_text[:MAX_DOCUMENT_CHARS]
-    system_prompt = f"""
+
+    contexto = texto_documento[
+        :MAX_CARACTERES_DOCUMENTO
+    ]
+
+    prompt_sistema = f"""
 Você é um assistente especializado em consulta de documentos.
 
 Responda utilizando apenas as informações presentes
@@ -28,32 +33,36 @@ dos principais pontos do documento.
 
 DOCUMENTO:
 
-{context}
+{contexto}
 """
 
-    messages = [
+    mensagens = [
         {
             "role": "system",
-            "content": system_prompt,
+            "content": prompt_sistema,
         }
     ]
 
-    if history:
-        messages.extend(history[-6:])
+    if historico:
+        mensagens.extend(
+            historico[-6:]
+        )
 
-    messages.append(
+    mensagens.append(
         {
             "role": "user",
-            "content": question,
+            "content": pergunta,
         }
     )
 
-    response = ollama.chat(
-        model=MODEL,
-        messages=messages,
+    resposta = ollama.chat(
+        model=MODELO,
+        messages=mensagens,
         options={
             "temperature": 0.2,
         },
     )
 
-    return response["message"]["content"]
+    return resposta[
+        "message"
+    ]["content"]
