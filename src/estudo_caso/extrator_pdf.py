@@ -24,19 +24,7 @@ def encontrar_pdfs(
 def extrair_texto(
     caminho_pdf: str | Path,
 ) -> tuple[str, str]:
-    """
-    Extrai o texto de um arquivo PDF.
 
-    Primeiro tenta realizar a extração normal
-    utilizando o PyMuPDF.
-
-    Caso alguma página não possua texto,
-    utiliza OCR como fallback.
-
-    Retorna:
-    - texto extraído
-    - método de extração utilizado
-    """
 
     partes_texto = []
 
