@@ -219,7 +219,7 @@ Esse comando cria o ambiente virtual e instala as bibliotecas definidas no `pypr
 
 ### 4. Instalando o Tesseract-ocr
 
-Nesta documentação você encontrará o executável do [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki), após a intalação você deverá clicar no executavel, apenas escolher o idioma e seguir até a instalação seja concluída.
+Nesta documentação você encontrará o executável do [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki), após a intalação você deverá clicar no executável, após a abertura do executável, basta escolher o idioma e seguir até que a instalação seja concluída.
 
 ### 5. Instalar o Ollama
 
@@ -376,8 +376,8 @@ Uma evolução futura seria integrar diretamente os resultados da busca ao conte
 ## Documentações utilizadas
 
 * [UV](https://docs.astral.sh/uv/getting-started/installation/)
-* [Ollama](Embeddingshttps://docs.ollama.com/capabilities/embeddings)
+* [Ollama-Embeddings](https://docs.ollama.com/capabilities/embeddings)
 * [Ollama-Gemma3:1b](https://ollama.com/library/gemma3:1b)
 * [NumPy](https://numpy.org/doc/stable/reference/generated/numpy.dot.html)
 * [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/the-basics.html#extract-text-from-a-pdf)
-* [Streamli](thttps://docs.streamlit.io/)
+* [Streamlit](https://docs.streamlit.io/)
