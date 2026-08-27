@@ -1,7 +1,7 @@
 [project]
 name = "estudo-caso"
 version = "0.1.0"
-description = "Add your description here"
+description = "Aplicação local para extração, classificação, busca semântica e consulta de documentos PDF."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

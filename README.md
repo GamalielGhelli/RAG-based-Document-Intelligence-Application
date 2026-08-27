@@ -17,7 +17,7 @@ O projeto tem como objetivo:
 * **uv** — gerenciamento do ambiente e dependências.
 * **PyMuPDF** — leitura e extração de texto dos PDFs.
 * **Ollama** — execução local dos modelos de IA.
-* **Gemma 3 1B** — classificação, perguntas e resumos.
+* **Gemma 3 1B** — perguntas e geração de resumos.
 * **EmbeddingGemma** — geração de embeddings para busca semântica.
 * **NumPy** — cálculo de similaridade entre embeddings.
 * **Streamlit** — interface da aplicação.
@@ -81,10 +81,6 @@ data/pdfs/
 ```bash
 uv run streamlit run app.py
 ```
-
-## Observação
-
-PDFs que não possuem camada de texto, como documentos totalmente escaneados, podem não ser processados nesta versão do projeto.
 
 ## Documentações usadas:
 
